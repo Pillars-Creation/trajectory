@@ -1,7 +1,7 @@
 clear; clc; close all;
 
 addpath('D:\workspace\drone\b5763-main\trajectory_vers2\trajectory_vers2');
-filename = 'v1.txt.acmi';
+filename = 'Copy_of_v1.txt.acmi';
 
 fid = fopen(filename, 'r');
 if fid == -1
@@ -60,9 +60,9 @@ for i = 1:length(object_ids)
 
     lon_ref = lon(1);
     lat_ref = lat(1);
-    x_m = (lon - lon_ref) * 111320 * cosd(lat_ref)*150;
-    y_m = (lat - lat_ref) * 111320*50;
-    z_m = z*30;
+    x_m = (lon - lon_ref) * 111320 * cosd(lat_ref)*15;
+    y_m = (lat - lat_ref) * 111320;
+    z_m = z;
 
     scale_factor = 1;
     step = 1;
