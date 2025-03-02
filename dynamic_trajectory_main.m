@@ -73,9 +73,9 @@ for i = 1:length(object_ids)
     scale_factor = 1;
     step = 1;
     trail_length = 3;
-    selector = 'jet';
+    selector = '80jet';
     if contains(lower(name), 'f16')
-        selector = 'jet';
+        selector = '80jet';
     end
 
     % 设置固定坐标轴范围
