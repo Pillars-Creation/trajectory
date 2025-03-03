@@ -236,7 +236,7 @@ end
 h_traj = plot3(x, y, z, 'b-', 'LineWidth', 2);
 
 % 设置图形属性
-light;
+%light;
 grid on;
 view(82.50, 2);
 daspect([1 1 1]);
@@ -303,7 +303,7 @@ function trajectory_old(x, y, z, pitch, roll, yaw, scale_factor, step)
     axis equal;
     hold on;
     plot3(x, y, z);
-    light;
+    %light;
     grid on;
     view(82.50, 2);
     xlabel('X (m)');
