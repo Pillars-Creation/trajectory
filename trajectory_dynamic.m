@@ -1,5 +1,5 @@
-function [h_traj, h_models] = trajectory_dynamic(x, y, z, pitch, roll, yaw, scale_factor, step, V, F, C, color)
-%   function [h_traj, h_models] = trajectory_dynamic(x, y, z, pitch, roll, yaw, scale_factor, step, V, F, C, color)
+function h_models = trajectory_dynamic(x, y, z, pitch, roll, yaw, scale_factor, step, V, F, C, color)
+%   function h_models = trajectory_dynamic(x, y, z, pitch, roll, yaw, scale_factor, step, V, F, C, color)
 %
 %   x, y, z             center trajectory (vector)    [m]
 %   pitch, roll, yaw    euler's angles                [rad]
@@ -11,8 +11,9 @@ function [h_traj, h_models] = trajectory_dynamic(x, y, z, pitch, roll, yaw, scal
 %   color               model color                  [string]
 %
 %   OUTPUT:
-%   h_traj              handle to trajectory line
 %   h_models            handles to model patches (cell array)
+%
+%   NOTICE: This function now only updates models, not the trajectory line.
 %
 %   *******************************
 %   Function Version: Dynamic (based on trajectory2 v2.0)
@@ -82,12 +83,9 @@ for i = 1:step:(ii-resto)
     model_idx = model_idx + 1;
 end
 
-% 绘制轨迹线
-h_traj = plot3(x, y, z, 'b-', 'LineWidth', 2);
-
-% 设置图形属性（移除 view）
+% 移除 plot3，不再更新轨迹线
+% 设置图形属性
 grid on;
-% view(82.50, 2); % 移除此行，避免重置视角
 daspect([1 1 1]);
 xlabel('X (m)');
 ylabel('Y (m)');
