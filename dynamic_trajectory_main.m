@@ -96,8 +96,8 @@ for i = 1:num_objects
     z_m = z * 290;
 
     % 参数设置
-    scale_factor = 1;
-    step = 5; % 减少模型更新频率
+    scale_factor = 9000; % 放大模型尺寸，确保可见
+    step = 5;
     trail_length = min(300, length(x_m));
     selector = 'jet';
 
@@ -107,11 +107,15 @@ for i = 1:num_objects
     
     % 初始化单一 patch 对象
     model_data = models.(selector);
-    V_init = model_data.V / max(abs(model_data.V(:,1))) * scale_factor;
+    V_init = model_data.V * scale_factor / max(abs(model_data.V(:))); % 调整初始模型大小
     h_model = patch('Faces', model_data.F, 'Vertices', V_init + [x_m(1) y_m(1) z_m(1)], ...
                     'FaceColor', get_line_color(color), 'FaceVertexCData', model_data.C, 'EdgeColor', 'none');
 
-    % 存储数据到结构体
+    % 调试：确认初始模型顶点范围
+    V_range = [min(V_init) max(V_init)];
+    disp(['初始模型 ' obj_id ' 的顶点范围: ' num2str(V_range)]);
+
+    % 存储数据到结构体（h_model 改为单一对象）
     data.(obj_id) = struct('x_m', x_m, 'y_m', y_m, 'z_m', z_m, ...
                            'pitch', pitch, 'roll', roll, 'yaw', yaw, ...
                            'scale_factor', scale_factor, 'step', step, ...
@@ -209,6 +213,9 @@ function update_all_trajectories(timerObj, ~)
                 V_new = update_model_position(model_data.V, obj_data.scale_factor, pitch_window(end), roll_window(end), yaw_window(end), ...
                                              x_window(end), y_window(end), z_window(end));
                 set(obj_data.h_model, 'Vertices', V_new);
+                % 调试：检查更新后的顶点范围
+                V_range = [min(V_new) max(V_new)];
+                disp(['更新 ' obj_id ' 模型后，顶点范围: ' num2str(V_range)]);
             else
                 disp(['警告: ' obj_id ' 的 h_model 无效或不是图形对象，类型: ' class(obj_data.h_model)]);
                 continue;
@@ -227,11 +234,16 @@ end
 
 % 更新模型位置的子函数
 function V_new = update_model_position(V, scale_factor, pitch, roll, yaw, x, y, z)
-    correction = max(abs(V(:,1)));
-    V_scaled = V / correction * scale_factor;
+    % 缩放模型
+    correction = max(abs(V(:)));
+    V_scaled = V * scale_factor / correction;
+    
+    % 计算旋转矩阵
     Tbe = [cos(yaw)*cos(pitch) sin(yaw)*cos(pitch) -sin(pitch);
            cos(yaw)*sin(pitch)*sin(roll)-sin(yaw)*cos(roll) sin(yaw)*sin(pitch)*sin(roll)+cos(yaw)*cos(roll) cos(pitch)*sin(roll);
            cos(yaw)*sin(pitch)*cos(roll)+sin(yaw)*sin(roll) sin(yaw)*sin(pitch)*cos(roll)-cos(yaw)*sin(roll) cos(pitch)*cos(roll)];
+    
+    % 应用旋转和位移
     V_new = V_scaled * Tbe + [x y z];
 end
 
